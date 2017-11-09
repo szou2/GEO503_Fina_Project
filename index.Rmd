@@ -108,8 +108,8 @@ plot(Income1_Join[Income1_Join$Change1>0,],add=T,col='red')
 plot(Income1_Join[Income1_Join$Change1<0,],add=T,col='blue')
 
 plot(VR1_Join,axes=TRUE)
-plot(VR1_Join[VR2_Join$Change1>0,],add=T,col='red')
-plot(VR1_Join[VR2_Join$Change1<0,],add=T,col='blue')
+plot(VR1_Join[VR1_Join$Change1>0,],add=T,col='red')
+plot(VR1_Join[VR1_Join$Change1<0,],add=T,col='blue')
 
 plot(Race1_Join,axes=TRUE)
 plot(Race1_Join[Race1_Join$Change1>0,],add=T,col='red')
