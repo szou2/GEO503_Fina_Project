@@ -125,7 +125,8 @@ $(document).ready(function () {
 
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
-<p>In 2010, Buffalo Mayor Byron Brown annoucned revitalization plan for City of Buffalo. The population growth, housing vacancy rate decrease and economic revitaliztion were planned to have a positive change in recent years.To understand the revitalization and its spatial and temporal characteristics, mapping the change of variables, like median income, vacancy rate, and race ratio could provide a quantative method. The objective of this project is to map the changes of these demographical variables in Buffalo, Erie County from block-group-level census data since 2013 to 2015.</p>
+<p>In 2010, Buffalo Mayor Byron Brown annoucned revitalization plan for City of Buffalo, including Demolition plan in 2007), Regional Action Plan for Downtown, Commercial Area Revitalization Effort (CARE) Program revitalization plans,the Local Waterfront Revitalization Program, the Buffalo Niagara Medical Campus Master Plan, plans created through the Good Neighbors Planning Alliance and others. (Buffalo Comprehensive Plan). Mapping the social variables provides us a quantitive way to measure and understand the revitalization progress and its spatial and temporal characteristics.</p>
+<p>The objective of this project is to map the changes of these demographical variables in Buffalo, Erie County from block-group-level census data since 2013 to 2015.</p>
 </div>
 <div id="data" class="section level2">
 <h2>Data</h2>
@@ -234,10 +235,221 @@ Race_Total$ChangeInTwoYears&lt;-Race_Total$Change1+Race_Total$Change2
 summary(Race_Total$ChangeInTwoYears)</code></pre>
 <pre><code>##       Min.    1st Qu.     Median       Mean    3rd Qu.       Max. 
 ## -160.96528   -0.13716   -0.03448    0.43058    0.03833  312.98869</code></pre>
-</div>
-<div id="further-work" class="section level2">
-<h2>Further work</h2>
-<p>Spatial autocorrelation of these change (Moran’s I) will be tested. Some certain area with significant change will be checked with some qualitative analysis.</p>
+<p>Correlation analysis</p>
+<pre class="r"><code>#Pearson's Correlation coefficient
+#Join all 2year change 
+
+Change_Join=merge(Income_Total,VR_Total,by=&quot;GEO.id2&quot;)
+Change_Join_All=merge(Change_Join,Race_Total,by=&quot;GEO.id2&quot;)
+head(Change_Join_All)</code></pre>
+<pre><code>##        GEO.id2          GEO.id.x.x.x
+## 1 360290001101 1500000US360290001101
+## 2 360290001102 1500000US360290001102
+## 3 360290001103 1500000US360290001103
+## 4 360290001104 1500000US360290001104
+## 5 360290002001 1500000US360290002001
+## 6 360290002002 1500000US360290002002
+##                                   GEO.display.label.x.x.x HD01_VD01.x.x.x
+## 1 Block Group 1, Census Tract 1.10, Erie County, New York           41976
+## 2 Block Group 2, Census Tract 1.10, Erie County, New York               -
+## 3 Block Group 3, Census Tract 1.10, Erie County, New York           17000
+## 4 Block Group 4, Census Tract 1.10, Erie County, New York           38295
+## 5    Block Group 1, Census Tract 2, Erie County, New York           38199
+## 6    Block Group 2, Census Tract 2, Erie County, New York           31298
+##            GEO.id.y.x.x
+## 1 1500000US360290001101
+## 2 1500000US360290001102
+## 3 1500000US360290001103
+## 4 1500000US360290001104
+## 5 1500000US360290002001
+## 6 1500000US360290002002
+##                                   GEO.display.label.y.x.x HD01_VD01.y.x.x
+## 1 Block Group 1, Census Tract 1.10, Erie County, New York           43477
+## 2 Block Group 2, Census Tract 1.10, Erie County, New York               -
+## 3 Block Group 3, Census Tract 1.10, Erie County, New York           35250
+## 4 Block Group 4, Census Tract 1.10, Erie County, New York           35833
+## 5    Block Group 1, Census Tract 2, Erie County, New York           36172
+## 6    Block Group 2, Census Tract 2, Erie County, New York           22302
+##   HD02_VD01 Change1.x          GEO.id.x.y.x
+## 1     11471        15 1500000US360290001101
+## 2        **         0 1500000US360290001102
+## 3     36301       181 1500000US360290001103
+## 4     12902       -13 1500000US360290001104
+## 5     10565        -9 1500000US360290002001
+## 6     15784       -97 1500000US360290002002
+##                                   GEO.display.label.x.y.x HD01_VD01.x.y.x
+## 1 Block Group 1, Census Tract 1.10, Erie County, New York           43477
+## 2 Block Group 2, Census Tract 1.10, Erie County, New York               -
+## 3 Block Group 3, Census Tract 1.10, Erie County, New York           35250
+## 4 Block Group 4, Census Tract 1.10, Erie County, New York           35833
+## 5    Block Group 1, Census Tract 2, Erie County, New York           36172
+## 6    Block Group 2, Census Tract 2, Erie County, New York           22302
+##   HD02_VD01.x          GEO.id.y.y.x
+## 1       11471 1500000US360290001101
+## 2          ** 1500000US360290001102
+## 3       36301 1500000US360290001103
+## 4       12902 1500000US360290001104
+## 5       10565 1500000US360290002001
+## 6       15784 1500000US360290002002
+##                                   GEO.display.label.y.y.x HD01_VD01.y.y.x
+## 1 Block Group 1, Census Tract 1.10, Erie County, New York           44087
+## 2 Block Group 2, Census Tract 1.10, Erie County, New York               -
+## 3 Block Group 3, Census Tract 1.10, Erie County, New York           48542
+## 4 Block Group 4, Census Tract 1.10, Erie County, New York           34342
+## 5    Block Group 1, Census Tract 2, Erie County, New York           35515
+## 6    Block Group 2, Census Tract 2, Erie County, New York           30302
+##   HD02_VD01.y Change2.x ChangeInTwoYears.x          GEO.id.x.x.y
+## 1       20248        -7                  8 1500000US360290001101
+## 2          **         0                  0 1500000US360290001102
+## 3       13796       125                306 1500000US360290001103
+## 4       10102       -31                -44 1500000US360290001104
+## 5       10698       -25                -34 1500000US360290002001
+## 6        9844        74                -23 1500000US360290002002
+##                                   GEO.display.label.x.x.y HD01_VD01.x.x.y
+## 1 Block Group 1, Census Tract 1.10, Erie County, New York             352
+## 2 Block Group 2, Census Tract 1.10, Erie County, New York               0
+## 3 Block Group 3, Census Tract 1.10, Erie County, New York             310
+## 4 Block Group 4, Census Tract 1.10, Erie County, New York             540
+## 5    Block Group 1, Census Tract 2, Erie County, New York             465
+## 6    Block Group 2, Census Tract 2, Erie County, New York             302
+##   HD01_VD02.x.x.x HD01_VD03.x.x VacancyRate.x.x          GEO.id.y.x.y
+## 1             291            61     0.173295455 1500000US360290001101
+## 2               0             0         #DIV/0! 1500000US360290001102
+## 3             258            52     0.167741935 1500000US360290001103
+## 4             485            55     0.101851852 1500000US360290001104
+## 5             465             0               0 1500000US360290002001
+## 6             271            31     0.102649007 1500000US360290002002
+##                                   GEO.display.label.y.x.y HD01_VD01.y.x.y
+## 1 Block Group 1, Census Tract 1.10, Erie County, New York             289
+## 2 Block Group 2, Census Tract 1.10, Erie County, New York               0
+## 3 Block Group 3, Census Tract 1.10, Erie County, New York             364
+## 4 Block Group 4, Census Tract 1.10, Erie County, New York             552
+## 5    Block Group 1, Census Tract 2, Erie County, New York             477
+## 6    Block Group 2, Census Tract 2, Erie County, New York             374
+##   HD01_VD02.y.x.x HD01_VD03.y.x VacancyRate.y.x     Change1.y
+## 1             233            56     0.193771626  0.3133333333
+## 2               0             0         #DIV/0!  0.0000000000
+## 3             311            53     0.145604396 -0.3055167055
+## 4             464            88      0.15942029  0.0893458393
+## 5             477             0               0 -0.0001680362
+## 6             308            66     0.176470588 -0.1060845724
+##            GEO.id.x.y.y
+## 1 1500000US360290001101
+## 2 1500000US360290001102
+## 3 1500000US360290001103
+## 4 1500000US360290001104
+## 5 1500000US360290002001
+## 6 1500000US360290002002
+##                                   GEO.display.label.x.y.y HD01_VD01.x.y.y
+## 1 Block Group 1, Census Tract 1.10, Erie County, New York             289
+## 2 Block Group 2, Census Tract 1.10, Erie County, New York               0
+## 3 Block Group 3, Census Tract 1.10, Erie County, New York             364
+## 4 Block Group 4, Census Tract 1.10, Erie County, New York             552
+## 5    Block Group 1, Census Tract 2, Erie County, New York             477
+## 6    Block Group 2, Census Tract 2, Erie County, New York             374
+##   HD01_VD02.x.y.x HD01_VD03.x.y VacancyRate.x.y          GEO.id.y.y.y
+## 1             233            56     0.193771626 1500000US360290001101
+## 2               0             0         #DIV/0! 1500000US360290001102
+## 3             311            53     0.145604396 1500000US360290001103
+## 4             464            88      0.15942029 1500000US360290001104
+## 5             477             0               0 1500000US360290002001
+## 6             308            66     0.176470588 1500000US360290002002
+##                                   GEO.display.label.y.y.y HD01_VD01.y.y.y
+## 1 Block Group 1, Census Tract 1.10, Erie County, New York             227
+## 2 Block Group 2, Census Tract 1.10, Erie County, New York               0
+## 3 Block Group 3, Census Tract 1.10, Erie County, New York             390
+## 4 Block Group 4, Census Tract 1.10, Erie County, New York             582
+## 5    Block Group 1, Census Tract 2, Erie County, New York             555
+## 6    Block Group 2, Census Tract 2, Erie County, New York             318
+##   HD01_VD02.y.y.x HD01_VD03.y.y VacancyRate.y.y     Change2.y
+## 1             175            52      0.22907489  0.4656862745
+## 2               0             0         #DIV/0!  0.0000000000
+## 3             329            61     0.156410256 -0.0681096681
+## 4             536            46     0.079037801 -0.1835002347
+## 5             555             0               0 -0.0008313509
+## 6             279            39     0.122641509  0.0166530908
+##   ChangeInTwoYears.y            GEO.id.x.x HD01_VD01.x.x HD01_VD02.x.x.y
+## 1        0.779019608 1500000US360290001101           647             631
+## 2        0.000000000 1500000US360290001102             0               0
+## 3       -0.373626374 1500000US360290001103           879             473
+## 4       -0.094154395 1500000US360290001104          1098             911
+## 5       -0.000999387 1500000US360290002001           935             856
+## 6       -0.089431482 1500000US360290002002           699             528
+##     WhiteRate            GEO.id.y.x HD01_VD01.y.x HD01_VD02.y.x.y
+## 1 0.975270479 1500000US360290001101           542             526
+## 2     #DIV/0! 1500000US360290001102             0               0
+## 3  0.53811149 1500000US360290001103          1108             490
+## 4 0.829690346 1500000US360290001104          1204            1030
+## 5 0.915508021 1500000US360290002001          1131            1011
+## 6 0.755364807 1500000US360290002002           714             478
+##   WhiteRatio.x      Change1            GEO.id.x.y HD01_VD01.x.y
+## 1  0.970479705  -0.01996329 1500000US360290001101           542
+## 2      #DIV/0!   0.00000000 1500000US360290001102             0
+## 3  0.442238267   7.56468531 1500000US360290001103          1108
+## 4  0.855481728 -14.07066052 1500000US360290001104          1204
+## 5  0.893899204  -0.78168013 1500000US360290002001          1131
+## 6  0.669467787  -0.08852994 1500000US360290002002           714
+##   HD01_VD02.x.y.y WhiteRatio.y            GEO.id.y.y
+## 1             526  0.970479705 1500000US360290001101
+## 2               0      #DIV/0! 1500000US360290001102
+## 3             490  0.442238267 1500000US360290001103
+## 4            1030  0.855481728 1500000US360290001104
+## 5            1011  0.893899204 1500000US360290002001
+## 6             478  0.669467787 1500000US360290002002
+##                                         GEO.display.label HD01_VD01.y.y
+## 1 Block Group 1, Census Tract 1.10, Erie County, New York           446
+## 2 Block Group 2, Census Tract 1.10, Erie County, New York             0
+## 3 Block Group 3, Census Tract 1.10, Erie County, New York          1091
+## 4 Block Group 4, Census Tract 1.10, Erie County, New York          1317
+## 5    Block Group 1, Census Tract 2, Erie County, New York          1358
+## 6    Block Group 2, Census Tract 2, Erie County, New York           664
+##   HD01_VD02.y.y.y     Change2 ChangeInTwoYears
+## 1             432 -0.04265189      -0.06261518
+## 2               0  0.00000000       0.00000000
+## 3             472 -0.52450980       7.04017551
+## 4            1121  0.17910682     -13.89155370
+## 5            1087  0.07499723      -0.70668290
+## 6             498  0.05414890      -0.03438103</code></pre>
+<pre class="r"><code>Change_Income=Change_Join_All$ChangeInTwoYears.x
+Change_VR=Change_Join_All$ChangeInTwoYears.y
+Change_Race=Change_Join_All$ChangeInTwoYears
+#cor between vr and income
+cor.test(Change_Income,Change_VR)</code></pre>
+<pre><code>## 
+##  Pearson's product-moment correlation
+## 
+## data:  Change_Income and Change_VR
+## t = 0.019741, df = 766, p-value = 0.9843
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.07003455  0.07145393
+## sample estimates:
+##          cor 
+## 0.0007132599</code></pre>
+<pre class="r"><code>cor.test(Change_Income,Change_Race)</code></pre>
+<pre><code>## 
+##  Pearson's product-moment correlation
+## 
+## data:  Change_Income and Change_Race
+## t = -1.1066, df = 766, p-value = 0.2688
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.11038476  0.03087907
+## sample estimates:
+##         cor 
+## -0.03995248</code></pre>
+<pre class="r"><code>cor.test(Change_Race,Change_VR)</code></pre>
+<pre><code>## 
+##  Pearson's product-moment correlation
+## 
+## data:  Change_Race and Change_VR
+## t = -0.081342, df = 766, p-value = 0.9352
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.07366796  0.06781937
+## sample estimates:
+##       cor 
+## -0.002939</code></pre>
 </div>
 
 

@@ -123,3 +123,17 @@ summary(VR_Total$ChangeInTwoYears)
 Race_Total=merge(Race1,Race2,by="GEO.id2")
 Race_Total$ChangeInTwoYears<-Race_Total$Change1+Race_Total$Change2
 summary(Race_Total$ChangeInTwoYears)
+
+#Pearson's Correlation coefficient
+#Join all 2year change 
+
+Change_Join=merge(Income_Total,VR_Total,by="GEO.id2")
+Change_Join_All=merge(Change_Join,Race_Total,by="GEO.id2")
+head(Change_Join_All)
+Change_Income=Change_Join_All$ChangeInTwoYears.x
+Change_VR=Change_Join_All$ChangeInTwoYears.y
+Change_Race=Change_Join_All$ChangeInTwoYears
+#cor between vr and income
+cor.test(Change_Income,Change_VR)
+cor.test(Change_Income,Change_Race)
+cor.test(Change_Race,Change_VR)
