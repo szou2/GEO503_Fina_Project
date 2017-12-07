@@ -1,8 +1,8 @@
 ---
-title: Mapping Revitalization in Buffalo, NY, through Income, Vancancy and Demographic Made up Data from 2013 to 2015 
-subtile: GEO503 Final Project First Draft
+title: Mapping Revitalization in Buffalo, NY, through Income, Vacancy and Demographic Make up Data from 2013 to 2015 
+subtile: GEO503 Final Project First
 author: "Shengyuan Zou"
-date: "November 4, 2017"
+date: "Dec 7, 2017"
 output:
   html_document: default
   pdf_document: default
@@ -12,7 +12,7 @@ output:
 
 In 2010, Buffalo Mayor Byron Brown annoucned revitalization plan for City of Buffalo, including Demolition plan in 2007), Regional Action Plan for Downtown, Commercial Area Revitalization Effort (CARE) Program revitalization plans,the Local Waterfront Revitalization Program, the Buffalo Niagara Medical Campus Master Plan, plans created through the Good Neighbors Planning Alliance and others. (Buffalo Comprehensive Plan). Mapping the social variables provides us a quantitive way to measure and understand the revitalization progress and its spatial and temporal characteristics.
 
-The objective of this project is to map the changes of these demographical variables in Buffalo, Erie County from block-group-level census data since 2013 to 2015.
+The objective of this project is to map the changes of these demographical variables in Buffalo, Erie County from block-group-level census data from 2013 to 2015.
 
 ```{r setup, include=FALSE}
 library(rgdal)
