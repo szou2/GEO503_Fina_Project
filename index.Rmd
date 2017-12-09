@@ -1,18 +1,20 @@
 ---
-title: Mapping Revitalization in Buffalo, NY, through Income, Vacancy and Demographic Make up Data from 2013 to 2015 
-subtile: GEO503 Final Project First
+title: Mapping Revitalization in Buffalo, NY, through Income, Vacancy and Demographic
+  Makeup Data from 2013 to 2015
 author: "Shengyuan Zou"
 date: "Dec 7, 2017"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
+subtile: GEO503 Final Project First
 ---
 
-##Introduction
+#Introduction
 
-In 2010, Buffalo Mayor Byron Brown annoucned revitalization plan for City of Buffalo, including Demolition plan in 2007), Regional Action Plan for Downtown, Commercial Area Revitalization Effort (CARE) Program revitalization plans,the Local Waterfront Revitalization Program, the Buffalo Niagara Medical Campus Master Plan, plans created through the Good Neighbors Planning Alliance and others. (Buffalo Comprehensive Plan). Mapping the social variables provides us a quantitive way to measure and understand the revitalization progress and its spatial and temporal characteristics.
+In 2010, Buffalo Mayor Byron Brown announced revitalization plan for City of Buffalo, including Demolition plan in 2007, Regional Action Plan for Downtown, Commercial Area Revitalization Effort (CARE) Program revitalization plans, the Local Waterfront Revitalization Program, the Buffalo Niagara Medical Campus Master Plan, plans created through the Good Neighbors Planning Alliance and others. (Buffalo Comprehensive Plan). Mapping the social variables provides us a quantitative way to measure and understand the revitalization progress and its spatial and temporal characteristics. The changes are visible in recent years. New medical center is built up in downtown, and more than 4,000 vacant houses have been demolished since 2007. Since these policies are pushed and implemented, it is very interesting to explore the feedback of social variables in local society. This project explores the feedback at a very start stage from economic, housing and demographic makeup aspects. The change in income, housing vacancy and race from 2013 to 2015 represent how the implementation of policies affects local society in the beginning.
 
 The objective of this project is to map the changes of these demographical variables in Buffalo, Erie County from block-group-level census data from 2013 to 2015.
+
 
 ```{r setup, include=FALSE}
 library(rgdal)
@@ -27,19 +29,19 @@ library(tigris)
 library(censusapi)
 ```
 
-##Data
-The geometry data are block-group-level shapfile for Erie County in 2015, which is downloaded from TIGER 029 at block_group level for Erie County using tigris package.
+#Data
+The geometry data are block-group-level shapfile for Erie County in 2015, which is downloaded from TIGER 029 at the block group level for Erie County using tigris package.
+A similar research has been done at the census tract level to explore the relationship between vacancy and other social variables in Buffalo on 2008-2010, before revitalization (Silverman et al. 2012).
+
+Data availability
+
+The demographic data, vacancy status, median household income and total population in race data in 2013, 2014 and 2015 are downloaded from census website. The CensusAPI has been tried. But block-group-level occupancy data is not accessible. Thus, we have to download these data from census wibsite manually.  In addition, occupancy status data, which is estimated by the American Community Survey program, are only available from 2013 to 2015. 
+
 ```{r shapefile input}
 shpfile<-block_groups('NY',county='Erie',year='2015')
-plot(shpfile,col=1:100)
+#plot(shpfile,col=1:100)
 
 ```
-The demographic data,vacancy status, median household income and total population in race data in 2013, 2014 and 2015 are downloaded from census website. The CensusAPI has been tried, but no available block-group-level data. Thus, we have to download these data manually. 
-
-Why 2013 to 2015?
-Occupancy status data are only available from 2013 to 2015.
-there is a similar research on 2008-2010, census tract level. (Silverman et al. 2012)
-
 
 ```{r data input}
 Income2013=read.csv(file = 'Data/Income2013.csv')
@@ -62,8 +64,18 @@ Race2015=read.csv(file = 'Data/RaceRatio2015.csv')
 
 ```
 
-##Data processing
-To derive the variables, vacancy rate and race ratio(the proportion of the Whites in this case), new columns were added and their values were calculated when join these tables and calculate the difference between individual years.
+#Method
+1.Variable calculation
+
+Vacancy rate=#Vacant house/#Total house
+
+Race ratio=#White population/#Total population
+
+Income=Median household income
+
+2.Change calculation
+
+Calculate the difference between individual years by joinging tables and subtracting previous year value.
 ```{r data processing}
 Income1=merge(Income2013,Income2014,by.x = 'GEO.id2',by.y = 'GEO.id2')
 
@@ -92,7 +104,10 @@ Race2$Change2=as.numeric(Race2$HD01_VD02.y)/as.numeric(Race2$HD01_VD01.y)-as.num
 
 ```
 
-Then join the geometry and data based on their GEOID.
+#Results and Visualization
+
+Join the geometry and data based on their GEOID. Some simple classified changes, only positive and negative, are plotted. Red represents positive change, and blue represents negative change.
+
 ```{r Join geo with data}
 Income1_Join=geo_join(shpfile,Income1,'GEOID','GEO.id2',how='inner')
 Income2_Join=geo_join(shpfile,Income2,'GEOID','GEO.id2',how='inner')
@@ -101,42 +116,87 @@ VR2_Join=geo_join(shpfile,VR2,'GEOID','GEO.id2',how='inner')
 Race1_Join=geo_join(shpfile,Race1,'GEOID','GEO.id2',how='inner')
 Race2_Join=geo_join(shpfile,Race2,'GEOID','GEO.id2',how='inner')
 ```
-##Visualization
-For now, some simple classified changes, only positive and negative, are plotted. Red represents positive change, and blue represents negative change.
 
 ```{r visualization}
 #Visualize the change in house vacancy, income and demographic made up
 
-#plot(Income1_Join[Income1_Join$Change1<-22,],add=T,col='blue')
-#plot(Income1_Join[Income1_Join$Change1>-22&&Income1_Join$Change1<5,],add=T,col='yellow')
-#plot(Income1_Join[Income1_Join$Change1>5&&Income1_Join$Change1<31,],add=T,col='green')
-#plot(Income1_Join[Income1_Join$Change1>31,],add=T,col='red')
-plot(Income1_Join,axes=TRUE)
-plot(Income1_Join[Income1_Join$Change1>0,],add=T,col='red')
-plot(Income1_Join[Income1_Join$Change1<0,],add=T,col='blue')
+#Income change from 2013-2014
+summary(Income1_Join$Change1)
 
-plot(VR1_Join,axes=TRUE)
-plot(VR1_Join[VR1_Join$Change1>0,],add=T,col='red')
-plot(VR1_Join[VR1_Join$Change1<0,],add=T,col='blue')
+Income1_Join$color=NULL
+Income1_Join$color[Income1_Join$Change1< -22]='red'
+Income1_Join$color[Income1_Join$Change1>-22&Income1_Join$Change1<5]='pink'
+Income1_Join$color[Income1_Join$Change1>5&Income1_Join$Change1<31]='orange'
+Income1_Join$color[Income1_Join$Change1>31]='yellow'
 
-plot(Race1_Join,axes=TRUE)
-plot(Race1_Join[Race1_Join$Change1>0,],add=T,col='red')
-plot(Race1_Join[Race1_Join$Change1<0,],add=T,col='blue')
+plot(Income1_Join,axes=TRUE,col=Income1_Join$color)
+legend(x='topleft', legend=c("<-22","-22~5","5~31",">31"), col=c("red","pink","orange","yellow"),pch=16)
+#Income change from 2014-2015
+summary(Income2_Join$Change2)
+
+Income2_Join$color=NULL
+Income2_Join$color[Income2_Join$Change2< -40]='red'
+Income2_Join$color[Income2_Join$Change2>-40&Income2_Join$Change2< -10]='pink'
+Income2_Join$color[Income2_Join$Change2>-10&Income2_Join$Change2<14]='orange'
+Income2_Join$color[Income2_Join$Change2>14]='yellow'
+
+plot(Income2_Join,axes=TRUE,col=Income2_Join$color)
+legend(x='topleft', legend=c("<-40","-40~-10","-10~14",">14"), col=c("red","pink","orange","yellow"),pch=16)
+
+#Vacancy rate change from 2013-2014
+
+summary(VR1_Join$Change1)
 
 
-plot(Income2_Join,axes=TRUE)
-plot(Income2_Join[Income2_Join$Change2>0,],add=T,col='red')
-plot(Income2_Join[Income2_Join$Change2<0,],add=T,col='blue')
+VR1_Join$color=NULL
+VR1_Join$color[VR1_Join$Change1< -0.06932]='red'
+VR1_Join$color[VR1_Join$Change1>-0.06932&VR1_Join$Change1< -0.00019]='pink'
+VR1_Join$color[VR1_Join$Change1>-0.00019&VR1_Join$Change1<0.04833]='orange'
+VR1_Join$color[VR1_Join$Change1>0.04833]='yellow'
 
-plot(VR2_Join,axes=TRUE)
-plot(VR2_Join[VR2_Join$Change2>0,],add=T,col='red')
-plot(VR2_Join[VR2_Join$Change2<0,],add=T,col='blue')
+plot(VR1_Join,axes=TRUE,col=VR1_Join$color)
+legend(x='topleft', legend=c("<--0.06932","-0.06932~-0.00019","-0.00019~0.04833",">0.04833"), col=c("red","pink","orange","yellow"),pch=16)
 
-plot(Race2_Join,axes=TRUE)
-plot(Race2_Join[Race2_Join$Change2>0,],add=T,col='red')
-plot(Race2_Join[Race2_Join$Change2<0,],add=T,col='blue')
+#Vacancy rate change from 2014-2015
+summary(VR2_Join$Change2)
+
+
+VR2_Join$color=NULL
+VR2_Join$color[VR2_Join$Change2< -0.07938]='red'
+VR2_Join$color[VR2_Join$Change2>-0.07938&VR2_Join$Change2< -0.00128]='pink'
+VR2_Join$color[VR2_Join$Change2>-0.00128&VR2_Join$Change2<0.03035]='orange'
+VR2_Join$color[VR2_Join$Change2>0.03035]='yellow'
+
+plot(VR2_Join,axes=TRUE,col=VR2_Join$color)
+legend(x='topleft', legend=c("<-0.07938","-0.07938~-0.00128","-0.00128~0.03035",">0.03035"), col=c("red","pink","orange","yellow"),pch=16)
+
+#Race ratio change from 2013-2014
+summary(Race1_Join$Change1)
+Race1_Join$color=NULL
+Race1_Join$color[Race1_Join$Change1< -0.07341]='red'
+Race1_Join$color[Race1_Join$Change1>-0.07341&Race1_Join$Change1< -0.01908]='pink'
+Race1_Join$color[Race1_Join$Change1>-0.01908&Race1_Join$Change1<0.02368]='orange'
+Race1_Join$color[Race1_Join$Change1>0.02368]='yellow'
+
+plot(Race1_Join,axes=TRUE,col=Race1_Join$color)
+legend(x='topleft', legend=c("<-0.07341","-0.07341~-0.01908","-0.01908~0.02368",">0.02368"), col=c("red","pink","orange","yellow"),pch=16)
+
+
+
+# Race ratio change from 2014-2015
+summary(Race2_Join$Change2)
+Race2_Join$color=NULL
+Race2_Join$color[Race2_Join$Change2< -0.08153]='red'
+Race2_Join$color[Race2_Join$Change2>-0.08153&Race2_Join$Change2< -0.01565]='pink'
+Race2_Join$color[Race2_Join$Change2>-0.01565&Race2_Join$Change2<0.02732]='orange'
+Race2_Join$color[Race2_Join$Change2>0.02732]='yellow'
+
+plot(Race2_Join,axes=TRUE,col=Race2_Join$color)
+legend(x='topleft', legend=c("<-0.08153","-0.08153~-0.01565","-0.01565~0.02732",">0.02732"), col=c("red","pink","orange","yellow"),pch=16)
+
 ```
-Merge two years change and summarize
+
+ Merge two years change and summarize
 ```{r merge and summarize}
 
 Income_Total=inner_join(Income1,Income2,by="GEO.id2")
@@ -152,7 +212,7 @@ Race_Total$ChangeInTwoYears<-Race_Total$Change1+Race_Total$Change2
 summary(Race_Total$ChangeInTwoYears)
 ```
 
-Correlation analysis
+#Correlation analysis
 ```{r Correlation}
 #Pearson's Correlation coefficient
 #Join all 2year change 
@@ -167,3 +227,34 @@ Change_Race=Change_Join_All$ChangeInTwoYears
 cor.test(Change_Income,Change_VR)
 cor.test(Change_Income,Change_Race)
 cor.test(Change_Race,Change_VR)
+plot(Change_Income,Change_VR)
+plot(Change_Income,Change_Race)
+plot(Change_Race,Change_VR)
+```
+
+#Conclusions
+1. The result of income change show that most census block groups have slight and inconstant change. Even for a same census block group, the income could slightly rise up from 2013 to 2014, and slighty fall back from 2014 to 2015. In addtion, there is no significant pattern for the change distribution.
+2. The change in vacancy rate and race ratio are even smaller than the change of income. Furthermore, the spatial distribution is chaotic.
+3. No significant linear relationship among these three variables based on Pearson's correlation test.
+4. The results show no significant feedback in local society to the implementation of revitalization policy. The reason could be that the feedback need time to be present. Also, the reason could be that the data are collected from 5-year estimated ACS data, which is estimated based on previous five years survey data. The change could happen but not update in this dataset.
+
+#References
+Silverman, R., Yin, L., & Patterson, K. L. (2013). Dawn of the dead city: An exploratory analysis of vacant addresses in Buffalo, NY 2008-2010. Journal of Urban Affairs, 35(2), 131-152.
+
+R Packages
+
+https://cran.r-project.org/web/packages/tigris/tigris.pdf
+
+https://cran.r-project.org/web/packages/censusapi/censusapi.pdf
+
+Data source website
+
+https://factfinder.census.gov/faces/nav/jsf/pages/searchresults.xhtml?refresh=t
+
+Buffalo's Comprehensive Plan
+
+https://www.ci.buffalo.ny.us/files/1_2_1/Mayor/COB_Comprehensive_Plan/index.html
+
+Buffalo's Demolition Plan
+https://ppgbuffalo.org/files/documents/housing_neighborhoods/housing_conditions_and_repairs/housingneighborhoods-_buffalos_demolition_strategy.pdf
+
